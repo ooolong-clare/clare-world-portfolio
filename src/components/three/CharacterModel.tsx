@@ -1,0 +1,11 @@
+import {Component,lazy,Suspense,useRef,useState,type ReactNode} from 'react';
+import type {Character} from '../../data/characters';
+const CharacterCanvas=lazy(()=>import('./CharacterCanvas'));
+class ModelBoundary extends Component<{children:ReactNode;fallback:ReactNode},{failed:boolean}>{state={failed:false};static getDerivedStateFromError(){return{failed:true}}render(){return this.state.failed?this.props.fallback:this.props.children}}
+export function CharacterModel({character,interactive=false,turn=0,onActivate}:{character:Character;interactive?:boolean;turn?:number;onActivate?:()=>void}){
+ const [rotation,setRotation]=useState({x:0,y:0}); const [zoom,setZoom]=useState(1); const [dragging,setDragging]=useState(false);const start=useRef<{x:number;y:number;moved:boolean}|null>(null);const [original,setOriginal]=useState(false);
+ const fallback=<img className={original?'character-image original':'character-image'} src={original?character.original:character.image} onError={()=>setOriginal(true)} alt={`${character.label} — Clare figurine`} draggable={false}/>;
+ return <div className={`character-model ${interactive?'interactive':''}`} style={{transform:`perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y+turn}deg) scale(${zoom})`,transition:dragging?'none':undefined}} onPointerDown={interactive?e=>{if(e.pointerType==='touch')return;start.current={x:e.clientX,y:e.clientY,moved:false};setDragging(true);e.currentTarget.setPointerCapture(e.pointerId)}:undefined} onPointerMove={e=>{if(!start.current)return;const dx=e.clientX-start.current.x,dy=e.clientY-start.current.y;if(Math.abs(dx)+Math.abs(dy)>6)start.current.moved=true;setRotation({y:Math.max(-35,Math.min(35,dx*.2)),x:Math.max(-8,Math.min(8,-dy*.1))})}} onPointerUp={e=>{if(!start.current)return;const moved=start.current.moved;start.current=null;setDragging(false);setRotation({x:0,y:0});if(moved){e.preventDefault();e.stopPropagation()}else onActivate?.()}} onPointerCancel={()=>{start.current=null;setDragging(false);setRotation({x:0,y:0})}} onDoubleClick={interactive?()=>setZoom(z=>z===1?1.08:1):undefined}>
+ {character.modelUrl?<ModelBoundary fallback={fallback}><Suspense fallback={fallback}><CharacterCanvas url={character.modelUrl}/></Suspense></ModelBoundary>:fallback}
+ </div>
+}

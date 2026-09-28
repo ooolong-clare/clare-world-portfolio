@@ -1,0 +1,42 @@
+/* Motion only: reuse the existing composition, breakpoints and character assets. */
+:root{--motion-ease:cubic-bezier(.22,1,.36,1)}
+.about-ghost{top:0;transform:translateY(-18%)}
+.continuous-stage{pointer-events:auto;touch-action:pan-y;cursor:grab}
+.continuous-stage:active{cursor:grabbing}
+.continuous-stage .orbit-figure{left:50%;bottom:4%;height:82%;transform-origin:50% 100%;transition:none;will-change:transform,opacity;pointer-events:none}
+.orbit-figure .figure-presence{height:100%;width:100%;transform-origin:50% 65%}
+.orbit-figure .figure-control{pointer-events:auto;cursor:inherit}
+.orbit-figure .satellite-caption{font-size:20px;bottom:-40px;transition:none}
+.home-copy-swap{transition:opacity 150ms ease,transform 220ms var(--motion-ease);opacity:1;transform:translateY(0)}
+.home-copy-swap.is-changing{opacity:0;transform:translateY(-8px)}
+.motion-home .home-caption h2{animation:none}
+.hero-first .hero-title{animation:hero-type 1500ms var(--motion-ease) both}
+.hero-first .continuous-stage{animation:hero-figures 950ms 550ms var(--motion-ease) both}
+.hero-first .home-bottom,.hero-first .home-footer{animation:hero-ui 450ms 1100ms both}
+@keyframes hero-type{0%{opacity:0;transform:translateY(20px) scale(1.03);filter:blur(0)}34%{opacity:1;transform:translateY(0) scale(1.025);filter:blur(0)}65%{opacity:.82;transform:scale(.985);filter:blur(1.5px)}100%{opacity:1;transform:none;filter:blur(0)}}
+@keyframes hero-figures{from{opacity:0;transform:translateY(25px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes hero-ui{from{opacity:0}to{opacity:1}}
+.home-retained{position:fixed;inset:0;z-index:40;pointer-events:none}
+.home-retained .continuous-stage,.home-retained .figure-control{pointer-events:none}
+.home-exiting .continuous-stage{animation:none}
+.home-exiting .hero-title,.home-exiting .home-bottom,.home-exiting .home-footer,.home-exiting .stage-orbit{animation:home-ui-out 300ms both}
+.home-exiting .orbit-figure[data-active=true] .figure-presence{animation:character-out 720ms var(--motion-ease) both}
+.home-exiting .orbit-figure[data-active=false] .figure-presence{animation:companions-out 320ms var(--motion-ease) both}
+@keyframes home-ui-out{to{opacity:0}}
+@keyframes character-out{0%{opacity:1;transform:scale(1)}45%{opacity:1;transform:scale(1.05)}100%{opacity:0;transform:translateY(-8px) scale(1.06)}}
+@keyframes companions-out{to{opacity:0;transform:scale(.94)}}
+.page-enter{animation:composition-in 600ms var(--motion-ease) both}
+.route-overlap .page-enter{animation-delay:100ms}
+.route-placeholder{min-height:100svh;background:inherit}
+@keyframes composition-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.click-spark-layer{position:fixed;inset:0;width:100%;height:100%;z-index:200;pointer-events:none}
+@media(min-width:641px) and (max-width:1050px){.continuous-stage .orbit-figure{height:77%;bottom:9%}}
+@media(max-width:640px){.continuous-stage .orbit-figure{height:61%;bottom:20%}.orbit-figure .satellite-caption{font-size:16px;bottom:-28px}.about-ghost{top:0;transform:translateY(-8%)}}
+@media(max-height:720px) and (min-width:641px){.continuous-stage .orbit-figure{height:79%;bottom:3%}}
+@media(prefers-reduced-motion:reduce){.motion-home *, .page-enter,.home-retained *{animation:none!important}.home-copy-swap{transform:none!important}.orbit-figure{filter:none!important}.about-ghost{transform:translateY(-18%)} }
+
+.motion-reduced .motion-home *,.motion-reduced .page-enter,.motion-reduced .home-retained *{animation:none!important}
+.motion-reduced .home-copy-swap{transform:none!important}
+.motion-reduced .orbit-figure{filter:none!important}
+
+.motion-reduced *{animation:none!important;transition-duration:100ms!important;scroll-behavior:auto!important}
